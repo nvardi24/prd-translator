@@ -1,0 +1,196 @@
+# Cursor Rules Management
+
+How to add and manage cursor rules in projects
+
+## Adding New Rules
+
+1. **MANDATORY: Every rule file MUST start with YAML front matter:**
+    ```yaml
+    ---
+    description: Short description of the rule's purpose
+    globs: optional/path/pattern/**/*
+    alwaysApply: false
+    ---
+    ```
+
+2. Always place rule files in .cursor/rules/:
+    ```
+    .cursor/rules/
+    ├── your-rule-name.mdc
+    ├── another-rule.mdc
+    └── ...
+    ```
+
+3. Follow the naming convention:
+    - Use kebab-case for filenames
+    - Always use .mdc extension
+    - Make names descriptive of the rule's purpose
+
+4. Directory structure:
+    ```
+    project-root/
+    ├── .cursor/
+    │   └── rules/
+    │       ├── your-rule-name.mdc
+    │       ├── react-patterns.mdc
+    │       ├── cursor-rules.mdc
+    │       └── ...
+    └── ...
+    ```
+
+5. Never place rule files:
+    - In the project root
+    - In subdirectories outside .cursor/rules
+    - In nested project-specific folders
+
+
+## YAML Front Matter Requirements
+
+**Every .mdc rule file MUST begin with these exact lines:**
+
+```yaml
+---
+description: [Brief description of what this rule does]
+globs: [Optional file pattern, e.g., "src/**/*.jsx"]
+alwaysApply: [true|false]
+---
+```
+
+### YAML Properties Explained:
+- **description**: Brief explanation of the rule's purpose
+- **globs**: File patterns where the rule applies (optional, leave blank for all files)
+- **alwaysApply**: 
+  - `true` = Rule always applies when using Cursor
+  - `false` = Rule applies only when explicitly referenced
+
+### Examples:
+```yaml
+# For React component rules
+---
+description: React hooks and component patterns
+globs: "src/**/*.jsx"
+alwaysApply: true
+---
+
+# For general project rules
+---
+description: How to add or edit Cursor rules in projects
+globs: 
+alwaysApply: false
+---
+```
+
+## Rule Structure Template
+
+After the YAML front matter, cursor rules have the following structure:
+
+````
+---
+description: Short description of the rule's purpose
+globs: optional/path/pattern/**/* 
+alwaysApply: false
+---
+# Rule Title
+
+Main content explaining the rule with markdown formatting.
+
+1. Step-by-step instructions
+2. Code examples
+3. Guidelines
+
+Example:
+```jsx
+// ✅ Good example
+export const useCustomHook = () => {
+  const [state, setState] = useState(null);
+  
+  const handleAction = useCallback(() => {
+    // Implementation following guidelines
+  }, []);
+  
+  return { state, handleAction };
+};
+
+// ❌ Bad example
+export const BadComponent = () => {
+  const [state, setState] = useState(null);
+  
+  const handleAction = () => {
+    // Implementation not following guidelines - no useCallback!
+  };
+  
+  return <div>{state}</div>;
+};
+```
+````
+
+## Rule Organization Best Practices
+
+### Rule Size Guidelines
+- **50-150 lines**: Ideal size for focused, digestible rules
+- **150-250 lines**: Still manageable for moderate complexity
+- **250+ lines**: Consider breaking into smaller focused rules
+
+### Focused Rules vs Monolithic Rules
+✅ **Prefer focused rules:**
+- Single responsibility (e.g., React hooks, error handling, API patterns)
+- Easier to maintain and update
+- Better discoverability
+- Selective application
+
+❌ **Avoid large monolithic rules:**
+- Hard to navigate and maintain
+- Slower processing
+- Difficult to selectively enable/disable
+
+## Automatic Documentation Updates
+
+When creating a new rule named `my-new-rule.mdc`:
+
+1. **Add to cursor-rules.mdc (this file):**
+   ```markdown
+   | `my-new-rule.mdc` | Description of the rule | Yes/No |
+   ```
+
+2. **Use AI assistance:**
+   ```
+   "I created a new cursor rule called my-new-rule.mdc. Please update cursor-rules.mdc to include this new rule."
+   ```
+
+## Validation Checklist
+
+Before committing a new rule, verify:
+- ✅ File starts with YAML front matter
+- ✅ File uses `.mdc` extension
+- ✅ File uses kebab-case naming
+- ✅ File is in `.cursor/rules/` directory
+- ✅ `cursor-rules.mdc` is updated with new rule
+- ✅ YAML properties are correctly set
+- ✅ Rule size is reasonable (under 250 lines preferred)
+
+## Multi-Project Considerations
+
+### For Project-Specific Rules
+Place additional project-specific rules in subdirectories:
+```
+.cursor/rules/                    # General rules (apply to all projects)
+├── react-patterns.mdc
+├── cursor-rules.mdc
+└── project-name/                 # Project-specific rules
+    ├── project-logging.mdc
+    └── project-testing.mdc
+```
+
+### For Workspace-Wide Rules
+Keep general language and coding standards at the root level to benefit all projects in the workspace.
+
+## Current Project Rules
+
+| Rule File | Description | Always Apply |
+|-----------|-------------|--------------|
+| `cursor-rules.mdc` | How to add or edit Cursor rules in projects | No |
+
+```
+
+### For Workspace-Wide Rules
+Keep general language and coding standards at the root level to benefit all projects in the workspace.

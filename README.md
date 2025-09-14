@@ -1,6 +1,6 @@
 # PRD Translator
 
-Transform complex Product Requirements Documents (PRDs) into structured connector prompts ready for Cursor development.
+Transform complex Product Requirements Documents (PRDs) into structured connector prompts ready for Connector development.
 
 ## 🚀 Features
 

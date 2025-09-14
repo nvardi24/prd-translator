@@ -7,7 +7,7 @@
 
 /**
  * Unstructured Connectors Template (Default - Dynamic Content-Driven Analysis)
- * For document and file-based connectors like Box, Google Drive, Confluence
+ * For document and file-based connectors like Box, Google Drive, Confluence, Jira
  * Enhanced to extract filtering requirements and content injection patterns directly from PRD content
  */
 export const UNSTRUCTURED_CONNECTOR_PROMPT = `You are a PRD analyzer that transforms complex Product Requirements Documents into structured, fillable AI-Ready PRD Tables specifically designed for unstructured data connectors.

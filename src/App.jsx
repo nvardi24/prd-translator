@@ -12,6 +12,7 @@ export default function App() {
     enableResearch, selectedTemplate, openAI, handleProcessPRD, handleClearInput, 
     handleTextChange, handleGenerateCursorPrompt, handleToggleResearch, handleTemplateChange
   } = useAppState();
+  
 
   return (
     <MainLayout>

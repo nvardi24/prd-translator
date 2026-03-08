@@ -296,21 +296,21 @@ export const CONNECTION_TEST_PROMPT = 'Test connection';
 export const PROMPT_CONFIG = {
   prdAnalyzer: {
     systemPrompt: PRD_ANALYZER_PROMPT,
-    maxTokens: 3000,
-    temperature: 0.3,
-    model: 'gpt-3.5-turbo'
+    maxTokens: 8000, 
+    temperature: 0.1, 
+    model: 'gpt-4o' 
   },
-  cursorPromptGenerator: {
+  cursorGenerator: {
     systemPrompt: BASE_CURSOR_PROMPT_GENERATOR,
-    maxTokens: 4000,
+    maxTokens: 8000,
     temperature: 0.2,
-    model: 'gpt-4'
+    model: 'gpt-4o' 
   },
   connectionTest: {
     userPrompt: CONNECTION_TEST_PROMPT,
-    maxTokens: 50,
-    temperature: 0.1,
-    model: 'gpt-3.5-turbo'
+    maxTokens: 100,
+    temperature: 0.0, 
+    model: 'gpt-4o-mini' 
   }
 };
 

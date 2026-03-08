@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useOpenAI } from './useOpenAI';
 import { getCharacterInfo } from '../utils/validation';
-import { getDefaultTemplate, shouldEnableWebSearch } from '../types/templateTypes';
 
 export const useAppState = () => {
   const [prdText, setPrdText] = useState('');
@@ -9,7 +8,6 @@ export const useAppState = () => {
   const [cursorPrompt, setCursorPrompt] = useState('');
   const [showOutput, setShowOutput] = useState(false);
   const [enableResearch, setEnableResearch] = useState(true);
-  const [selectedTemplate, setSelectedTemplate] = useState(getDefaultTemplate().id);
   const openAI = useOpenAI();
 
   const handleTextChange = useCallback((value) => {
@@ -24,16 +22,13 @@ export const useAppState = () => {
   }, []);
 
   const handleProcessPRD = useCallback(async () => {
-    // Only use research if the template supports it and it's enabled
-    const useResearch = shouldEnableWebSearch(selectedTemplate) && enableResearch;
-    
-    const result = await openAI.processPRD(prdText, useResearch, selectedTemplate);
+    const result = await openAI.processPRD(prdText, enableResearch);
     if (result) {
       setProcessedOutput(result);
-      setCursorPrompt(''); // Clear any existing cursor prompt
+      setCursorPrompt('');
       setShowOutput(true);
     }
-  }, [prdText, openAI, enableResearch, selectedTemplate]);
+  }, [prdText, openAI, enableResearch]);
 
   const handleGenerateCursorPrompt = useCallback(async () => {
     if (!processedOutput) return;
@@ -46,17 +41,6 @@ export const useAppState = () => {
 
   const handleToggleResearch = useCallback((enabled) => {
     setEnableResearch(enabled);
-  }, []);
-
-  const handleTemplateChange = useCallback((templateId) => {
-    setSelectedTemplate(templateId);
-    
-    // Auto-enable research if the new template supports it
-    if (shouldEnableWebSearch(templateId)) {
-      setEnableResearch(true);
-    } else {
-      setEnableResearch(false);
-    }
   }, []);
 
   const characterInfo = getCharacterInfo(prdText);
@@ -72,13 +56,11 @@ export const useAppState = () => {
     canProcess,
     characterInfo,
     enableResearch,
-    selectedTemplate,
     openAI,
     handleProcessPRD,
     handleClearInput,
     handleTextChange,
     handleGenerateCursorPrompt,
     handleToggleResearch,
-    handleTemplateChange
   };
-}; 
+};

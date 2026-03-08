@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Settings, ChevronDown, ChevronRight, Info } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, Button } from './ui';
 import { ApiKeyInput } from './settings/ApiKeyInput';
-import { ModelSelector } from './settings/ModelSelector';
 import { ConnectionStatus } from './settings/ConnectionStatus';
 import { SecurityNotice } from './settings/SecurityNotice';
 import toast from 'react-hot-toast';
@@ -11,9 +10,7 @@ export const SettingsSection = ({
   apiKey, 
   isConnected, 
   isLoading, 
-  selectedModel, 
   securityStatus,
-  onModelChange, 
   onSaveApiKey, 
   onTestConnection,
   onClearApiKey,
@@ -62,20 +59,12 @@ export const SettingsSection = ({
             onShowDetails={handleShowSecurityDetails}
           />
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ApiKeyInput
-              apiKey={apiKey}
-              onSave={onSaveApiKey}
-              onClear={onClearApiKey}
-              isLoading={isLoading}
-            />
-            
-            <ModelSelector
-              selectedModel={selectedModel}
-              onModelChange={onModelChange}
-              disabled={!isConnected}
-            />
-          </div>
+          <ApiKeyInput
+            apiKey={apiKey}
+            onSave={onSaveApiKey}
+            onClear={onClearApiKey}
+            isLoading={isLoading}
+          />
           
           <ConnectionStatus
             isConnected={isConnected}

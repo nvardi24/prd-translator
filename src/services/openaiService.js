@@ -1,7 +1,6 @@
 import OpenAI from 'openai';
 import { errorHandling } from '../utils/errorHandling';
-import { BASE_CURSOR_PROMPT_GENERATOR, getPromptConfig } from '../prompts/connectorPrompts';
-import { getTemplatePrompt } from '../prompts/templatePrompts';
+import { PRD_ANALYZER_PROMPT, BASE_CURSOR_PROMPT_GENERATOR, getPromptConfig } from '../prompts/connectorPrompts';
 
 class OpenAIService {
   constructor() {
@@ -41,7 +40,7 @@ class OpenAIService {
     }
   }
 
-  async parsePRD(prdText, model = 'gpt-3.5-turbo', templateId = 'unstructured_connector', researchData = null) {
+  async parsePRD(prdText, researchData = null) {
     if (!this.client) {
       throw errorHandling.createError('OpenAI client not initialized', 'CLIENT_NOT_INITIALIZED');
     }
@@ -52,25 +51,23 @@ class OpenAIService {
 
     try {
       const config = getPromptConfig('prdAnalyzer');
-      
-      // Get the template-specific prompt
-      let templatePrompt = getTemplatePrompt(templateId);
-      
-      // Enhance with research data if available
+
+      let systemPrompt = PRD_ANALYZER_PROMPT;
+
       if (researchData) {
-        templatePrompt += `\n\nIMPORTANT: Use the following current API research data to provide accurate, up-to-date information in your analysis:\n\n${researchData}\n\nUse this research to fill out authentication methods, API capabilities, rate limits, file types, and technical requirements with CURRENT and ACCURATE information instead of generic placeholders.`;
+        systemPrompt += `\n\nIMPORTANT: Use the following current API research data to provide accurate, up-to-date information in your analysis:\n\n${researchData}\n\nUse this research to fill out authentication methods, API capabilities, rate limits, file types, and technical requirements with CURRENT and ACCURATE information instead of generic placeholders.`;
       }
-      
+
       let userMessage = `Here's the PRD to analyze:\n\n${prdText}`;
-      
+
       if (researchData) {
         userMessage += `\n\nAPI Research Data Available: Use the provided research data to ensure accuracy.`;
       }
-      
+
       const response = await this.client.chat.completions.create({
-        model: model,
+        model: config.model,
         messages: [
-          { role: 'system', content: templatePrompt },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
         ],
         max_tokens: config.maxTokens,
@@ -85,7 +82,7 @@ class OpenAIService {
     }
   }
 
-  async generateCursorPrompt(structuredPRD, model = 'gpt-3.5-turbo') {
+  async generateCursorPrompt(structuredPRD) {
     if (!this.client) {
       throw errorHandling.createError('OpenAI client not initialized', 'CLIENT_NOT_INITIALIZED');
     }
@@ -96,10 +93,9 @@ class OpenAIService {
 
     try {
       const config = getPromptConfig('cursorGenerator');
-      
-      // Use the base cursor prompt generator (same for all templates)
+
       const response = await this.client.chat.completions.create({
-        model: model,
+        model: config.model,
         messages: [
           { role: 'system', content: BASE_CURSOR_PROMPT_GENERATOR },
           { role: 'user', content: `Here's the structured PRD Requirements Table to convert into a Cursor prompt:\n\n${structuredPRD}` }
@@ -116,22 +112,23 @@ class OpenAIService {
     }
   }
 
-  async identifyServiceFromPRD(prdText, model = 'gpt-3.5-turbo') {
+  async identifyServiceFromPRD(prdText) {
     if (!this.client) {
       throw errorHandling.createError('OpenAI client not initialized', 'CLIENT_NOT_INITIALIZED');
     }
 
     try {
+      const config = getPromptConfig('connectionTest');
       const response = await this.client.chat.completions.create({
-        model: model,
+        model: config.model,
         messages: [
-          { 
-            role: 'system', 
-            content: `You are a service identifier. Extract the main service/platform name from PRD text. Return ONLY the service name (e.g., "Box", "ServiceNow", "Confluence", "GitHub", "Jira", "Slack"). If unclear, return "Unknown".` 
+          {
+            role: 'system',
+            content: `You are a service identifier. Extract the main service/platform name from PRD text. Return ONLY the service name (e.g., "Box", "ServiceNow", "Confluence", "GitHub", "Jira", "Slack"). If unclear, return "Unknown".`
           },
-          { 
-            role: 'user', 
-            content: `Identify the main service/platform from this PRD:\n\n${prdText}` 
+          {
+            role: 'user',
+            content: `Identify the main service/platform from this PRD:\n\n${prdText}`
           }
         ],
         max_tokens: 50,
@@ -146,4 +143,4 @@ class OpenAIService {
   }
 }
 
-export const openaiService = new OpenAIService(); 
+export const openaiService = new OpenAIService();

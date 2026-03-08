@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiKeyStorage, modelStorage } from '../utils/storage';
+import { apiKeyStorage } from '../utils/storage';
 import { securityUtils } from '../utils/secureStorage';
 import { isValidApiKey } from '../utils/validation';
 import toast from 'react-hot-toast';
 
 export const useApiKey = () => {
   const [apiKey, setApiKey] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
   const [isLoading, setIsLoading] = useState(false);
   const [securityStatus, setSecurityStatus] = useState(null);
 
@@ -24,13 +23,10 @@ export const useApiKey = () => {
   useEffect(() => {
     try {
       const savedApiKey = apiKeyStorage.get();
-      const savedModel = modelStorage.get();
-      
+
       if (savedApiKey && apiKeyStorage.isValid(savedApiKey)) {
         setApiKey(savedApiKey);
       }
-      
-      setSelectedModel(savedModel);
     } catch (error) {
       console.error('Failed to load saved API key:', error);
       toast.error('Failed to load saved API key. Please re-enter.');
@@ -94,11 +90,6 @@ export const useApiKey = () => {
     }
   }, []);
 
-  const updateModel = useCallback((model) => {
-    setSelectedModel(model);
-    modelStorage.set(model);
-  }, []);
-
   const getSecurityInfo = useCallback(() => {
     return securityUtils.getSecurityReport();
   }, []);
@@ -107,14 +98,11 @@ export const useApiKey = () => {
 
   return {
     apiKey,
-    selectedModel,
     isLoading,
     isConfigured,
     securityStatus,
     saveApiKey,
     clearApiKey,
-    updateModel,
-    setSelectedModel: updateModel,
     getSecurityInfo
   };
 }; 

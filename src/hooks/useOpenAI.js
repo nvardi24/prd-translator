@@ -131,7 +131,7 @@ Error Handling: HTTP status codes with detailed messages
     }
   }, [apiKeyHook.apiKey]);
 
-  const processPRD = useCallback(async (prdText, enableResearch = true, templateId = 'unstructured_connector') => {
+  const processPRD = useCallback(async (prdText, enableResearch = true) => {
     if (!apiKeyHook.apiKey) {
       toast.error('Please configure your OpenAI API key first');
       return null;
@@ -154,7 +154,7 @@ Error Handling: HTTP status codes with detailed messages
         toast.loading('🔍 Identifying service and researching API...', { id: 'research' });
         
         // Step 1: Identify the service from PRD
-        serviceName = await openaiService.identifyServiceFromPRD(prdText, apiKeyHook.selectedModel);
+        serviceName = await openaiService.identifyServiceFromPRD(prdText);
         console.log(`Identified service: ${serviceName}`);
         
         if (serviceName && serviceName !== 'Unknown') {
@@ -179,7 +179,7 @@ Error Handling: HTTP status codes with detailed messages
 
       // Step 3: Process PRD with research data and template
       toast.loading('🤖 Analyzing PRD and generating requirements...', { id: 'processing' });
-      const result = await openaiService.parsePRD(prdText, apiKeyHook.selectedModel, templateId, researchData);
+      const result = await openaiService.parsePRD(prdText, researchData);
       
       toast.success('✅ PRD transformed successfully!', { id: 'processing' });
       
@@ -199,7 +199,7 @@ Error Handling: HTTP status codes with detailed messages
       setIsProcessing(false);
       setIsResearching(false);
     }
-  }, [apiKeyHook.apiKey, apiKeyHook.selectedModel]);
+  }, [apiKeyHook.apiKey]);
 
   const generateCursorPrompt = useCallback(async (structuredPRD) => {
     if (!apiKeyHook.apiKey) {
@@ -215,7 +215,7 @@ Error Handling: HTTP status codes with detailed messages
     setIsGeneratingPrompt(true);
     try {
       openaiService.initialize(apiKeyHook.apiKey);
-      const result = await openaiService.generateCursorPrompt(structuredPRD, apiKeyHook.selectedModel);
+      const result = await openaiService.generateCursorPrompt(structuredPRD);
       toast.success('Cursor prompt generated successfully!');
       return result;
     } catch (error) {
@@ -225,17 +225,15 @@ Error Handling: HTTP status codes with detailed messages
     } finally {
       setIsGeneratingPrompt(false);
     }
-  }, [apiKeyHook.apiKey, apiKeyHook.selectedModel]);
+  }, [apiKeyHook.apiKey]);
 
   return {
     apiKey: apiKeyHook.apiKey,
-    selectedModel: apiKeyHook.selectedModel,
     isConnected: apiKeyHook.isConfigured,
     isLoading: apiKeyHook.isLoading,
     securityStatus: apiKeyHook.securityStatus,
     saveApiKey: apiKeyHook.saveApiKey,
     clearApiKey: apiKeyHook.clearApiKey,
-    setSelectedModel: apiKeyHook.setSelectedModel,
     getSecurityInfo: apiKeyHook.getSecurityInfo,
     isProcessing,
     isGeneratingPrompt,

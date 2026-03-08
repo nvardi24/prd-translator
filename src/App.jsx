@@ -9,8 +9,8 @@ import { useAppState } from './hooks/useAppState';
 export default function App() {
   const {
     prdText, processedOutput, cursorPrompt, showOutput, hasInput, canProcess,
-    enableResearch, selectedTemplate, openAI, handleProcessPRD, handleClearInput, 
-    handleTextChange, handleGenerateCursorPrompt, handleToggleResearch, handleTemplateChange
+    enableResearch, openAI, handleProcessPRD, handleClearInput, 
+    handleTextChange, handleGenerateCursorPrompt, handleToggleResearch
   } = useAppState();
 
   return (
@@ -19,9 +19,7 @@ export default function App() {
         apiKey={openAI.apiKey}
         isConnected={openAI.isConnected}
         isLoading={openAI.isLoading}
-        selectedModel={openAI.selectedModel}
         securityStatus={openAI.securityStatus}
-        onModelChange={openAI.setSelectedModel}
         onSaveApiKey={openAI.saveApiKey}
         onTestConnection={openAI.testConnection}
         onClearApiKey={openAI.clearApiKey}
@@ -34,8 +32,6 @@ export default function App() {
         onClear={handleClearInput}
         enableResearch={enableResearch}
         onToggleResearch={handleToggleResearch}
-        selectedTemplate={selectedTemplate}
-        onTemplateChange={handleTemplateChange}
       />
       
       <ProcessButton 
